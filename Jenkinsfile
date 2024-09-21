@@ -1,57 +1,42 @@
 pipeline {
     agent any
+
+    environment {
+        EMAIL_RECIPIENT = 'yashagg00001@gmail.com' // Change to your email
+    }
+
     stages {
         stage('Build') {
             steps {
-                echo 'Building the code...'
-                // Add your build tool command here, e.g., sh 'mvn clean package' if using Maven
+                echo 'Building the application...'
+                // Assuming you're just running the Python file directly, adjust as needed
+                sh 'python app.py' // Replace with your build command if needed
             }
         }
-        stage('Unit and Integration Tests') {
+        stage('Unit Tests') {
             steps {
-                echo 'Running unit and integration tests...'
-                // Add your testing tool command here, e.g., sh 'pytest' if using pytest
+                echo 'Running unit tests...'
+                // Assuming you have tests defined, otherwise this can be omitted
+                sh 'pytest' // If using pytest, make sure it's installed
             }
         }
-        stage('Code Analysis') {
+        stage('Notify') {
             steps {
-                echo 'Analyzing code...'
-                // Add your code analysis tool command here, e.g., sh 'sonar-scanner' if using SonarQube
-            }
-        }
-        stage('Security Scan') {
-            steps {
-                echo 'Performing security scan...'
-                // Add your security scanning tool command here, e.g., sh 'bandit -r app.py'
-            }
-        }
-        stage('Deploy to Staging') {
-            steps {
-                echo 'Deploying to staging...'
-                // Add your deployment command here, e.g., sh 'aws deploy'
-            }
-        }
-        stage('Integration Tests on Staging') {
-            steps {
-                echo 'Running integration tests on staging...'
-                // Add your integration test command here
-            }
-        }
-        stage('Deploy to Production') {
-            steps {
-                echo 'Deploying to production...'
-                // Add your production deployment command here, e.g., sh 'aws deploy'
+                script {
+                    emailext(
+                        to: EMAIL_RECIPIENT,
+                        subject: "Build ${currentBuild.fullDisplayName}",
+                        body: "Build status: ${currentBuild.currentResult}\n\nCheck the build ${env.BUILD_URL} for more details.",
+                        attachLog: true // Attach the build log
+                    )
+                }
             }
         }
     }
+
     post {
         always {
-            emailext(
-                to: 'your-email@example.com',
-                subject: "Build #${env.BUILD_NUMBER} - ${currentBuild.currentResult}",
-                body: """The build ${env.BUILD_NUMBER} has completed.
-                Check the console log at ${env.BUILD_URL}console"""
-            )
+            echo "Pipeline finished with status: ${currentBuild.currentResult}"
         }
     }
 }
