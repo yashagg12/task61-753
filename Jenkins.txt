@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building the Jenkins pipeline...'
+                // Add actual build commands, e.g., sh 'mvn clean package'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+                // Add actual test commands, e.g., sh 'pytest'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying application...'
+                // Add actual deployment commands, e.g., sh './deploy.sh'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline succeeded!'
+            emailext subject: "SUCCESS - Jenkins Pipeline Status",
+                     body: "The Jenkins pipeline has succeeded.",
+                     to: 'yashagg00001@gmail.com',
+                     attachLog: true
+        }
+        failure {
+            echo 'Pipeline failed!'
+            emailext subject: "FAILURE - Jenkins Pipeline Status",
+                     body: "The Jenkins pipeline has failed.",
+                     to: 'ygarg299@gmail.com',
+                     attachLog: true
+        }
+    }
+}
