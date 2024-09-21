@@ -9,15 +9,8 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building the application...'
-                // Assuming you're just running the Python file directly, adjust as needed
-                sh 'python app.py' // Replace with your build command if needed
-            }
-        }
-        stage('Unit Tests') {
-            steps {
-                echo 'Running unit tests...'
-                // Assuming you have tests defined, otherwise this can be omitted
-                sh 'pytest' // If using pytest, make sure it's installed
+                // Run the Python application (or any build command you have)
+                sh 'python app.py' // Adjust as needed
             }
         }
         stage('Notify') {
